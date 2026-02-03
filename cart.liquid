@@ -1,0 +1,167 @@
+<section class="cart-section">
+  <div class="container">
+    <h1 class="cart-title">Warenkorb</h1>
+
+    {% if cart.item_count > 0 %}
+      <form action="/cart" method="post" novalidate>
+        <div class="cart-layout">
+          {% comment %} Cart Items {% endcomment %}
+          <div class="cart-items">
+            {% for item in cart.items %}
+              <div class="cart-item">
+                {% comment %} Product Image {% endcomment %}
+                <div class="cart-item-image">
+                  {% if item.image %}
+                    <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title | escape }}" loading="lazy">
+                  {% else %}
+                    <div class="cart-item-placeholder">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                {% comment %} Product Details {% endcomment %}
+                <div class="cart-item-details">
+                  <h3 class="cart-item-title">
+                    <a href="{{ item.url }}">{{ item.product.title }}</a>
+                  </h3>
+                  
+                  {% unless item.variant.title == 'Default Title' %}
+                    <p class="cart-item-variant">{{ item.variant.title }}</p>
+                  {% endunless %}
+
+                  {% if item.properties.size > 0 %}
+                    <div class="cart-item-properties">
+                      {% for p in item.properties %}
+                        {% unless p.last == blank %}
+                          <span>{{ p.first }}: {{ p.last }}</span>
+                        {% endunless %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  <div class="cart-item-price-mobile">
+                    {{ item.final_line_price | money }}
+                  </div>
+                </div>
+
+                {% comment %} Quantity {% endcomment %}
+                <div class="cart-item-quantity">
+                  <div class="quantity-selector">
+                    <button type="button" class="quantity-btn quantity-minus" data-line="{{ forloop.index }}">−</button>
+                    <input 
+                      type="number" 
+                      name="updates[]" 
+                      value="{{ item.quantity }}" 
+                      min="0"
+                      data-line="{{ forloop.index }}"
+                      class="quantity-input"
+                    >
+                    <button type="button" class="quantity-btn quantity-plus" data-line="{{ forloop.index }}">+</button>
+                  </div>
+                </div>
+
+                {% comment %} Price {% endcomment %}
+                <div class="cart-item-price">
+                  {{ item.final_line_price | money }}
+                </div>
+
+                {% comment %} Remove {% endcomment %}
+                <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="cart-item-remove" aria-label="Entfernen">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% comment %} Cart Summary {% endcomment %}
+          <div class="cart-summary">
+            <h2 class="cart-summary-title">Zusammenfassung</h2>
+            
+            <div class="cart-summary-row">
+              <span>Zwischensumme</span>
+              <span>{{ cart.items_subtotal_price | money }}</span>
+            </div>
+
+            {% if cart.cart_level_discount_applications.size > 0 %}
+              {% for discount_application in cart.cart_level_discount_applications %}
+                <div class="cart-summary-row cart-summary-discount">
+                  <span>Rabatt ({{ discount_application.title }})</span>
+                  <span>−{{ discount_application.total_allocated_amount | money }}</span>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <div class="cart-summary-row cart-summary-total">
+              <span>Gesamtsumme</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+
+            {% if cart.taxes_included %}
+              <p class="cart-summary-note">Inkl. MwSt. und Versandkosten</p>
+            {% endif %}
+
+            <div class="cart-summary-actions">
+              <button type="submit" name="checkout" class="btn btn-primary btn-large btn-full">
+                Zur Kasse
+              </button>
+              <a href="/collections/all" class="btn btn-secondary btn-full">
+                Weiter einkaufen
+              </a>
+            </div>
+
+            {% comment %} Trust Badges {% endcomment %}
+            <div class="cart-trust">
+              <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Sichere Bezahlung</span>
+              </div>
+              <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span>Kostenloser Versand ab 50€</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    {% else %}
+      <div class="cart-empty">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <h2>Dein Warenkorb ist leer</h2>
+        <p>Entdecke unsere Produkte und fülle deinen Warenkorb.</p>
+        <a href="/collections/all" class="btn btn-primary btn-large">Jetzt shoppen</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  // Quantity buttons
+  document.querySelectorAll('.quantity-minus, .quantity-plus').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const line = this.dataset.line;
+      const input = document.querySelector(`input[data-line="${line}"]`);
+      let value = parseInt(input.value);
+      
+      if (this.classList.contains('quantity-minus')) {
+        value = Math.max(0, value - 1);
+      } else {
+        value = value + 1;
+      }
+      
+      input.value = value;
+      input.closest('form').submit();
+    });
+  });
+</script>

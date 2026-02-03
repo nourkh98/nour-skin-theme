@@ -1,0 +1,82 @@
+{% paginate collection.products by 12 %}
+
+<section class="collection-section">
+  {% comment %} Collection Header {% endcomment %}
+  <div class="collection-header">
+    <div class="container">
+      {% if collection.image %}
+        <div class="collection-image">
+          <img src="{{ collection.image | image_url: width: 1600 }}" alt="{{ collection.title | escape }}" loading="eager">
+        </div>
+      {% endif %}
+      <div class="collection-header-content">
+        <h1 class="collection-title">{{ collection.title }}</h1>
+        {% if collection.description != blank %}
+          <div class="collection-description rte">
+            {{ collection.description }}
+          </div>
+        {% endif %}
+        <p class="collection-count">{{ collection.products_count }} Produkt{% if collection.products_count != 1 %}e{% endif %}</p>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Collection Products {% endcomment %}
+  <div class="collection-products">
+    <div class="container">
+      {% if collection.products.size > 0 %}
+        <div class="products-grid">
+          {% for product in collection.products %}
+            {% render 'product-card', product: product %}
+          {% endfor %}
+        </div>
+
+        {% comment %} Pagination {% endcomment %}
+        {% if paginate.pages > 1 %}
+          <div class="pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination-prev">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Zurück
+              </a>
+            {% endif %}
+            
+            <div class="pagination-pages">
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="pagination-page">{{ part.title }}</a>
+                {% else %}
+                  <span class="pagination-page pagination-current">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination-next">
+                Weiter
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="collection-empty">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <h2>Keine Produkte gefunden</h2>
+          <p>Diese Kollektion enthält noch keine Produkte.</p>
+          <a href="/collections/all" class="btn btn-primary">Alle Produkte ansehen</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endpaginate %}

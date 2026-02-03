@@ -1,0 +1,126 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "badge": "Premium Naturkosmetik",
+        "title_line1": "Wo Schönheit",
+        "title_line2": "auf Licht trifft",
+        "description": "Entdecke die Kraft der Natur für strahlende Haut. Unsere Produkte vereinen Luxus, Nachhaltigkeit und sichtbare Ergebnisse.",
+        "button_text": "Jetzt Shoppen",
+        "button_url": "/collections/all",
+        "button_secondary_text": "Unsere Story",
+        "button_secondary_url": "/pages/ueber-uns",
+        "trust_1": "Kostenloser Versand ab 50€",
+        "trust_2": "30 Tage Rückgaberecht",
+        "trust_3": "Cruelty-Free & Vegan"
+      }
+    },
+    "categories": {
+      "type": "categories",
+      "settings": {
+        "label": "Entdecke",
+        "title": "Unsere Kategorien",
+        "description": "Von Hautpflege bis Haarpflege – finde das Perfekte für deine Routine."
+      },
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "title": "Hautpflege",
+            "product_count": "12",
+            "collection_url": "/collections/hautpflege"
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "title": "Haarpflege",
+            "product_count": "8",
+            "collection_url": "/collections/haarpflege"
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "title": "Körperpflege",
+            "product_count": "6",
+            "collection_url": "/collections/koerperpflege"
+          }
+        }
+      }
+    },
+    "products": {
+      "type": "products",
+      "settings": {
+        "label": "Unsere Bestseller",
+        "title": "Luxuriöse Pflege",
+        "description": "Wo Schönheit auf Licht trifft – Entdecke Produkte, die deine Haut zum Strahlen bringen.",
+        "collection": "all",
+        "products_limit": 8,
+        "show_view_all": true
+      }
+    },
+    "about": {
+      "type": "about",
+      "settings": {
+        "stats_number": "10K+",
+        "stats_label": "Zufriedene Kunden",
+        "label": "Über Nour Skin",
+        "title": "Natürliche Schönheit,",
+        "title_highlight": "nachhaltig erlebt",
+        "text_1": "Bei Nour Skin glauben wir daran, dass wahre Schönheit von innen kommt. Unsere Produkte werden mit sorgfältig ausgewählten, natürlichen Inhaltsstoffen entwickelt.",
+        "text_2": "Jede Formel ist ein Versprechen: frei von schädlichen Chemikalien, tierversuchsfrei und umweltfreundlich.",
+        "button_text": "Mehr erfahren",
+        "button_url": "/pages/ueber-uns"
+      },
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "title": "100% Natur",
+            "text": "Reine Inhaltsstoffe aus der Natur"
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "title": "Cruelty-Free",
+            "text": "Nie an Tieren getestet"
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "title": "Nachhaltig",
+            "text": "Umweltfreundliche Verpackung"
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "title": "Wirksam",
+            "text": "Sichtbare Ergebnisse garantiert"
+          }
+        }
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "title": "Bleib im Licht",
+        "text": "Melde dich für unseren Newsletter an und erhalte 10% Rabatt auf deine erste Bestellung sowie exklusive Tipps für strahlende Haut.",
+        "placeholder": "Deine E-Mail-Adresse",
+        "button_text": "Anmelden",
+        "note": "Mit der Anmeldung stimmst du unserer Datenschutzerklärung zu."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "products",
+    "about",
+    "newsletter"
+  ]
+}

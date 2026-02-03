@@ -1,0 +1,214 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<section class="product-section">
+  <div class="product-container">
+    {% comment %} Product Images {% endcomment %}
+    <div class="product-images">
+      {% if product.images.size > 0 %}
+        <div class="product-image-main">
+          <img 
+            src="{{ product.featured_image | image_url: width: 800 }}" 
+            alt="{{ product.featured_image.alt | escape }}"
+            id="product-featured-image"
+            loading="eager"
+          >
+        </div>
+        {% if product.images.size > 1 %}
+          <div class="product-image-thumbnails">
+            {% for image in product.images %}
+              <button 
+                class="product-thumbnail{% if forloop.first %} active{% endif %}"
+                data-image="{{ image | image_url: width: 800 }}"
+                data-alt="{{ image.alt | escape }}"
+              >
+                <img src="{{ image | image_url: width: 150 }}" alt="{{ image.alt | escape }}" loading="lazy">
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="product-image-main product-image-placeholder">
+          {{ 'product-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% comment %} Product Info {% endcomment %}
+    <div class="product-info">
+      {% if product.vendor != blank %}
+        <span class="product-vendor">{{ product.vendor }}</span>
+      {% endif %}
+      
+      <h1 class="product-title">{{ product.title }}</h1>
+      
+      <div class="product-price">
+        {% if current_variant.compare_at_price > current_variant.price %}
+          <span class="product-price-sale">{{ current_variant.price | money }}</span>
+          <span class="product-price-compare">{{ current_variant.compare_at_price | money }}</span>
+          <span class="product-price-badge">Sale</span>
+        {% else %}
+          <span class="product-price-regular">{{ current_variant.price | money }}</span>
+        {% endif %}
+      </div>
+
+      {% if product.description != blank %}
+        <div class="product-description rte">
+          {{ product.description }}
+        </div>
+      {% endif %}
+
+      {% form 'product', product %}
+        {% unless product.has_only_default_variant %}
+          <div class="product-variants">
+            {% for option in product.options_with_values %}
+              <div class="product-option">
+                <label class="product-option-label" for="Option-{{ option.position }}">
+                  {{ option.name }}
+                </label>
+                <select 
+                  id="Option-{{ option.position }}"
+                  name="options[{{ option.name | escape }}]"
+                  class="product-option-select"
+                >
+                  {% for value in option.values %}
+                    <option 
+                      value="{{ value | escape }}"
+                      {% if option.selected_value == value %}selected{% endif %}
+                    >
+                      {{ value }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endfor %}
+          </div>
+        {% endunless %}
+
+        <div class="product-quantity">
+          <label class="product-option-label" for="Quantity">Menge</label>
+          <div class="quantity-selector">
+            <button type="button" class="quantity-btn quantity-minus" aria-label="Menge verringern">−</button>
+            <input 
+              type="number" 
+              id="Quantity" 
+              name="quantity" 
+              value="1" 
+              min="1"
+              class="quantity-input"
+            >
+            <button type="button" class="quantity-btn quantity-plus" aria-label="Menge erhöhen">+</button>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          name="add"
+          class="product-add-to-cart btn btn-primary btn-large"
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          {% if current_variant.available %}
+            In den Warenkorb
+          {% else %}
+            Ausverkauft
+          {% endif %}
+        </button>
+      {% endform %}
+
+      {% comment %} Product Meta {% endcomment %}
+      <div class="product-meta">
+        {% if product.tags.size > 0 %}
+          <div class="product-meta-item">
+            <span class="product-meta-label">Tags:</span>
+            {% for tag in product.tags %}
+              <span class="product-meta-tag">{{ tag }}</span>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="product-meta-item">
+          <span class="product-meta-label">SKU:</span>
+          <span>{{ current_variant.sku | default: 'N/A' }}</span>
+        </div>
+      </div>
+
+      {% comment %} Trust Badges {% endcomment %}
+      <div class="product-trust">
+        <div class="trust-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 13l4 4L19 7"></path>
+          </svg>
+          <span>Kostenloser Versand ab 50€</span>
+        </div>
+        <div class="trust-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>Sichere Bezahlung</span>
+        </div>
+        <div class="trust-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>30 Tage Rückgaberecht</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% comment %} Related Products {% endcomment %}
+{% if collection == null or collection.handle == 'all' %}
+  {% assign found_collection = false %}
+  {% for c in product.collections %}
+    {% if found_collection == false and c.handle != 'all' %}
+      {% assign found_collection = true %}
+      {% assign collection = c %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if collection and collection.products_count > 1 %}
+  <section class="related-products">
+    <div class="container">
+      <h2 class="related-products-title">Das könnte dir auch gefallen</h2>
+      <div class="products-grid">
+        {% for related_product in collection.products limit: 4 %}
+          {% unless related_product.handle == product.handle %}
+            {% render 'product-card', product: related_product %}
+          {% endunless %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+<script>
+  // Image gallery
+  document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      const mainImage = document.getElementById('product-featured-image');
+      mainImage.src = this.dataset.image;
+      mainImage.alt = this.dataset.alt;
+      
+      document.querySelectorAll('.product-thumbnail').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Quantity selector
+  const quantityInput = document.querySelector('.quantity-input');
+  const minusBtn = document.querySelector('.quantity-minus');
+  const plusBtn = document.querySelector('.quantity-plus');
+
+  if (minusBtn && plusBtn && quantityInput) {
+    minusBtn.addEventListener('click', () => {
+      const current = parseInt(quantityInput.value);
+      if (current > 1) quantityInput.value = current - 1;
+    });
+
+    plusBtn.addEventListener('click', () => {
+      const current = parseInt(quantityInput.value);
+      quantityInput.value = current + 1;
+    });
+  }
+</script>
